@@ -9,17 +9,18 @@ TILE = 50
 W = WIDTH // TILE
 H = HEIGHT // TILE
 
-next_field = [[o for i in range(W)] for j in range(H)]
-current_field = [[randint(0, 1) for i in range(W)] for i in range(H)]
-
 class Game:
     def __init__(self):
         pygame.init()
+        self.menu_init()
         self.screen = pygame.display.set_mode(RES)
         self.clock = pygame.time.Clock()
-
-    def new_game(self):
-        pass
+        self.pause = True
+        
+    def starting_arrangement(self, num):
+        if num == 0:
+            self.next_field = [[o for i in range(W)] for j in range(H)]
+            self.current_field = [[randint(0, 1) for i in range(W)] for i in range(H)]
 
     def update(self):
         pygame.display.flip()
@@ -49,8 +50,9 @@ class Game:
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    sys.exit()
+                    self.pause = not self.pause
+                elif event.key == pygame.K1:
+                    self.starting_arrangement(1)
 
     def check_cell(self, current_field, x, y):
         count = 0
@@ -70,15 +72,36 @@ class Game:
                 return True
             return False
 
+    def menu_init(self):
+        self.boxes.append(Box(x, y, width, height, 'MENU'))
+        self.boxes.append(Box(x, y, width, height, 'Start'))
+        self.boxes.append(Box(x, y, width, height, 'Exit'))
+
     def menu(self):
-            self.screen.fill('yellow')
+        self.screen.fill('yellow')
+        for box in boxes:
+            box.draw()
 
     def run(self):
         while True:
             self.check_events()
             self.update()
-            self.draw()            
+            if self.pause:
+                self.menu()
+            else:
+                self.draw()            
     
+class Box:
+    def __init__(self, top, left, width, height, text):
+        self.top = top
+        self.left = left
+        self.width = width
+        self.height = height
+        self.text = text
+
+    def draw(self):
+        pass
+
 if __name__ == 'main':
     game = Game()
     game.run()
