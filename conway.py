@@ -4,8 +4,8 @@ from copy import deepcopy
 import sys
 
 FPS = 60
-RES = WIDTH, HEIGHT = (1600, 900)
-TILE = 50
+RES = WIDTH, HEIGHT = (1700, 900)
+TILE = 5
 W = WIDTH // TILE
 H = HEIGHT // TILE
 SELECTED_BOX_COLOR = ''
@@ -14,15 +14,19 @@ BOX_COLOR = ''
 class Game:
     def __init__(self):
         pygame.init()
-        self.menu_init()
+        #self.menu_init()
         self.screen = pygame.display.set_mode(RES)
         self.clock = pygame.time.Clock()
-        self.pause = True
+        self.pause = False
+        self.starting_arrangement(0)
         
     def starting_arrangement(self, num):
         if num == 0:
-            self.next_field = [[o for i in range(W)] for j in range(H)]
-            self.current_field = [[randint(0, 1) for i in range(W)] for i in range(H)]
+            self.next_field = [[0 for i in range(W)] for j in range(H)]
+            self.current_field = [[randint(0, 1) for i in range(W)] for j in range(H)]
+        if num == 1:
+            self.next_field = [[0 for i in range(W)] for j in range(H)]
+            self.current_field = [[1 if i % 2 == 0 else 0 for i in range(W)] for j in range(H)]
 
     def update(self):
         pygame.display.flip()
@@ -33,19 +37,19 @@ class Game:
         self.screen.fill('black')
 
         # draw grid
-        [pygame.draw.line(screen, pygame.Color('dimgray'), (x, 0), (x, HEIGHT)) for x in range(0, WIDTH, TILE)]
-        [pygame.draw.line(screen, pygame.Color('dimgray'), (0, y), (WIDTH, y)) for y in range(0, HEIGHT, TILE)]
+        [pygame.draw.line(self.screen, pygame.Color('dimgray'), (x, 0), (x, HEIGHT)) for x in range(0, WIDTH, TILE)]
+        [pygame.draw.line(self.screen, pygame.Color('dimgray'), (0, y), (WIDTH, y)) for y in range(0, HEIGHT, TILE)]
 
         # draw life
         for x in range(1, W - 1):
             for y in range(1, H - 1):
-                if current_field[y][x]:
-                    pygame.draw.rect(screen, pygame.Color('forestgreen'), (x * TILE + 2, y * TILE - 2, TILE - 2, TILE - 2))
-                next_field[y][x] = self.check_cell(current_field, x, y)
+                if self.current_field[y][x]:
+                    pygame.draw.rect(self.screen, pygame.Color('forestgreen'), (x * TILE + 2, y * TILE - 2, TILE - 2, TILE - 2))
+                self.next_field[y][x] = self.check_cell(self.current_field, x, y)
 
-        current_field = deepcopy(next_field)
+        self.current_field = deepcopy(self.next_field)
 
-    def check_events(self)
+    def check_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -53,7 +57,7 @@ class Game:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.pause = not self.pause
-                elif event.key == pygame.K1:
+                elif event.key == pygame.K_1:
                     self.starting_arrangement(1)
 
     def check_cell(self, current_field, x, y):
@@ -74,39 +78,40 @@ class Game:
                 return True
             return False
 
-    def menu_init(self):
-        self.boxes.append(Box(x, y, width, height, 'MENU'))
-        self.boxes.append(Box(x, y, width, height, 'Start'))
-        self.boxes.append(Box(x, y, width, height, 'Exit'))
+    # def menu_init(self):
+    #     self.boxes.append(Box(x, y, width, height, 'MENU'))
+    #     self.boxes.append(Box(x, y, width, height, 'Start'))
+    #     self.boxes.append(Box(x, y, width, height, 'Exit'))
 
-    def menu(self):
-        self.screen.fill('yellow')
-        for box in boxes:
-            box.draw()
+    # def menu(self):
+    #     self.screen.fill('yellow')
+    #     for box in boxes:
+    #         box.draw()
 
     def run(self):
         while True:
             self.check_events()
             self.update()
             if self.pause:
-                self.menu()
+                #self.menu()
+                pass
             else:
                 self.draw()            
     
-class Box:
-    def __init__(self, top, left, width, height, text):
-        self.rect = pygame.Rect(left, top, width, height)
-        self.text = text
-        self.font = pygame.font.Font()
+# class Box:
+#     def __init__(self, top, left, width, height, text):
+#         self.rect = pygame.Rect(left, top, width, height)
+#         self.text = text
+#         self.font = pygame.font.Font()
 
-    def get_selection(self):
+#     def get_selection(self):
 
-        return False
+#         return False
 
-    def draw(self):
-        self.selected = self.get_selection()
-        color = SELECTED_COLOR if self.selected else BOX_COLOR
+#     def draw(self):
+#         self.selected = self.get_selection()
+#         color = SELECTED_COLOR if self.selected else BOX_COLOR
 
-if __name__ == 'main':
+if __name__ == '__main__':
     game = Game()
     game.run()
