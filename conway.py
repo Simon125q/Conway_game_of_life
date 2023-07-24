@@ -8,6 +8,8 @@ RES = WIDTH, HEIGHT = (1600, 900)
 TILE = 50
 W = WIDTH // TILE
 H = HEIGHT // TILE
+SELECTED_BOX_COLOR = ''
+BOX_COLOR = ''
 
 class Game:
     def __init__(self):
@@ -93,14 +95,17 @@ class Game:
     
 class Box:
     def __init__(self, top, left, width, height, text):
-        self.top = top
-        self.left = left
-        self.width = width
-        self.height = height
+        self.rect = pygame.Rect(left, top, width, height)
         self.text = text
+        self.font = pygame.font.Font()
+
+    def get_selection(self):
+
+        return False
 
     def draw(self):
-        pass
+        self.selected = self.get_selection()
+        color = SELECTED_COLOR if self.selected else BOX_COLOR
 
 if __name__ == 'main':
     game = Game()
