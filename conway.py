@@ -8,13 +8,13 @@ RES = WIDTH, HEIGHT = (1700, 900)
 TILE = 5
 W = WIDTH // TILE
 H = HEIGHT // TILE
-SELECTED_BOX_COLOR = ''
-BOX_COLOR = ''
+SELECTED_BOX_COLOR = '#222222'
+BOX_COLOR = '#448844'
 
 class Game:
     def __init__(self):
         pygame.init()
-        #self.menu_init()
+        self.menu_init()
         self.screen = pygame.display.set_mode(RES)
         self.clock = pygame.time.Clock()
         self.pause = False
@@ -78,39 +78,39 @@ class Game:
                 return True
             return False
 
-    # def menu_init(self):
-    #     self.boxes.append(Box(x, y, width, height, 'MENU'))
-    #     self.boxes.append(Box(x, y, width, height, 'Start'))
-    #     self.boxes.append(Box(x, y, width, height, 'Exit'))
+    def menu_init(self):
+        self.boxes.append(Box(WIDTH//4, 40, WIDTH//2, 200, 'MENU'))
+        self.boxes.append(Box(WIDTH//4, 280, WIDTH//2, 200, 'Start'))
+        self.boxes.append(Box(WIDTH//4, 520, WIDTH//2, 200, 'Exit'))
 
-    # def menu(self):
-    #     self.screen.fill('yellow')
-    #     for box in boxes:
-    #         box.draw()
+    def menu(self):
+        self.screen.fill('yellow')
+        for box in boxes:
+            box.draw()
 
     def run(self):
         while True:
             self.check_events()
             self.update()
             if self.pause:
-                #self.menu()
+                self.menu()
                 pass
             else:
                 self.draw()            
     
-# class Box:
-#     def __init__(self, top, left, width, height, text):
-#         self.rect = pygame.Rect(left, top, width, height)
-#         self.text = text
-#         self.font = pygame.font.Font()
+class Box:
+    def __init__(self, top, left, width, height, text):
+        self.rect = pygame.Rect(left, top, width, height)
+        self.text = text
+        self.font = pygame.font.Font()
 
-#     def get_selection(self):
+    def get_selection(self):
 
-#         return False
+        return False
 
-#     def draw(self):
-#         self.selected = self.get_selection()
-#         color = SELECTED_COLOR if self.selected else BOX_COLOR
+    def draw(self):
+        self.selected = self.get_selection()
+        color = SELECTED_COLOR if self.selected else BOX_COLOR
 
 if __name__ == '__main__':
     game = Game()
