@@ -9,7 +9,11 @@ TILE = 5
 W = WIDTH // TILE
 H = HEIGHT // TILE
 SELECTED_BOX_COLOR = '#222222'
-BOX_COLOR = '#448844'
+BOX_COLOR = '#222222'
+BOX_HEIGHT = 100
+BOX_WIDTH = WIDTH // 2
+FONT = pygame.font.get_default_font()
+FONT_SIZE = 30
 
 class Game:
     def __init__(self):
@@ -17,7 +21,7 @@ class Game:
         self.menu_init()
         self.screen = pygame.display.set_mode(RES)
         self.clock = pygame.time.Clock()
-        self.pause = False
+        self.pause = True
         self.starting_arrangement(0)
         
     def starting_arrangement(self, num):
@@ -59,6 +63,8 @@ class Game:
                     self.pause = not self.pause
                 elif event.key == pygame.K_1:
                     self.starting_arrangement(1)
+                elif event.key == pygame.K_0:
+                    self.starting_arrangement(0)
 
     def check_cell(self, current_field, x, y):
         count = 0
@@ -79,14 +85,20 @@ class Game:
             return False
 
     def menu_init(self):
-        self.boxes.append(Box(WIDTH//4, 40, WIDTH//2, 200, 'MENU'))
-        self.boxes.append(Box(WIDTH//4, 280, WIDTH//2, 200, 'Start'))
-        self.boxes.append(Box(WIDTH//4, 520, WIDTH//2, 200, 'Exit'))
+        self.boxes = []
+        margin_height = (HEIGHT - (BOX_HEIGHT * 3 + 2 * 40)) // 2
+        self.boxes.append(Box(margin_height + BOX_HEIGHT, WIDTH//4, BOX_WIDTH, BOX_HEIGHT, 'START'))
+        self.boxes.append(Box(margin_height + 2 * BOX_HEIGHT + 40, WIDTH//4, BOX_WIDTH, BOX_HEIGHT, 'EXIT'))
 
     def menu(self):
-        self.screen.fill('yellow')
-        for box in boxes:
-            box.draw()
+        self.screen.fill('darkgrey')
+        self.font = pygame.font.Font(FONT, 80)
+        text_surf = self.font.render("GAME OF LIFE", False, "#ffffff")
+        text_rect = text_surf.get_rect(midtop = pygame.math.Vector2(WIDTH//2, 40))
+        self.screen.blit(text_surf, text_rect)
+        surface = pygame.display.get_surface()
+        for box in self.boxes:
+            box.draw(surface)
 
     def run(self):
         while True:
@@ -102,15 +114,19 @@ class Box:
     def __init__(self, top, left, width, height, text):
         self.rect = pygame.Rect(left, top, width, height)
         self.text = text
-        self.font = pygame.font.Font()
+        self.font = pygame.font.Font(FONT, FONT_SIZE)
 
     def get_selection(self):
 
         return False
 
-    def draw(self):
+    def draw(self, surface):
         self.selected = self.get_selection()
-        color = SELECTED_COLOR if self.selected else BOX_COLOR
+        color = SELECTED_BOX_COLOR if self.selected else BOX_COLOR
+        pygame.draw.rect(surface, color, self.rect)
+        text_surf = self.font.render(self.text, False, "#ffffff")
+        text_rect = text_surf.get_rect(center = self.rect.center)
+        surface.blit(text_surf, text_rect)
 
 if __name__ == '__main__':
     game = Game()
