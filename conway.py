@@ -6,7 +6,7 @@ import sys
 pygame.init()
 FPS = 60
 RES = WIDTH, HEIGHT = (1700, 900)
-TILE = 5
+TILE = 7
 W = WIDTH // TILE
 H = HEIGHT // TILE
 SELECTED_BOX_COLOR = '#222222'
@@ -33,9 +33,17 @@ class Game:
         elif num == 1:
             self.current_field = [[1 if i % 2 == 0 else 0 for i in range(W)] for j in range(H)]
         elif num == 2:
-            self.current_field = [[1 if not (i * j + i) % 24 else 0 for i in range(W)] for j in range(H)]
+            self.current_field = [[1 if not (i * j) % 20 else 0 for i in range(W)] for j in range(H)]
         elif num == 3:
-            self.current_field = [[1 if i % 2 and j % 4 else 0 for i in range(W)] for j in range(H)]
+            self.current_field = [[0 for i in range(W)] for j in range(H)]
+            for i in range(H):
+                self.current_field[i][i + (W - H) // 2] = 1
+                self.current_field[H - i - 1][i + (W - H) // 2] = 1
+        elif num == 4:
+            self.current_field = [[1 if i == W // 2 or j == H // 2 else 0 for i in range(W)] for j in range(H)]
+        elif num == 5:
+            self.current_field = [[1 if i % 5 and j % 3 else 0 for i in range(W)] for j in range(H)]
+            
 
     def update(self):
         pygame.display.flip()
@@ -79,6 +87,8 @@ class Game:
                     self.starting_arrangement(3)
                 elif event.key == pygame.K_4:
                     self.starting_arrangement(4)
+                elif event.key == pygame.K_5:
+                    self.starting_arrangement(5)
                     
         if self.exit_button.active:
             pygame.quit()
